@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipStore - Online Shopping</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-top">
+            <div class="container header-flex">
+                <div class="logo" onclick="window.location='index.html'">
+                    <i class="fas fa-bolt"></i>
+                    <span>Flip<strong>Store</strong></span>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search for products, brands and more...">
+                    <button onclick="searchProducts()"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="header-actions">
+                    <a href="index.html" class="btn-header">
+                        <i class="fas fa-home"></i><span>Home</span>
+                    </a>
+                    <a href="cart.html" class="btn-header">
+                        <i class="fas fa-shopping-cart"></i><span>Cart</span>
+                        <span class="cart-badge" id="cartBadge">0</span>
+                    </a>
+                    <a href="tracking.html" class="btn-header">
+                        <i class="fas fa-truck"></i><span>Orders</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="header-categories">
+            <div class="container">
+                <nav class="categories-nav">
+                    <button class="cat-btn active" onclick="filterCategory('all', this)">All</button>
+                    <button class="cat-btn" onclick="filterCategory('electronics', this)">Electronics</button>
+                    <button class="cat-btn" onclick="filterCategory('fashion', this)">Fashion</button>
+                    <button class="cat-btn" onclick="filterCategory('home', this)">Home & Furniture</button>
+                    <button class="cat-btn" onclick="filterCategory('appliances', this)">Appliances</button>
+                    <button class="cat-btn" onclick="filterCategory('beauty', this)">Beauty</button>
+                    <button class="cat-btn" onclick="filterCategory('sports', this)">Sports</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav class="mobile-bottom-nav">
+        <a href="index.html" class="mobile-nav-btn active">
+            <i class="fas fa-home"></i><span>Home</span>
+        </a>
+        <button class="mobile-nav-btn" onclick="scrollToCategories()">
+            <i class="fas fa-th-large"></i><span>Categories</span>
+        </button>
+        <a href="cart.html" class="mobile-nav-btn">
+            <i class="fas fa-shopping-cart"></i><span>Cart</span>
+            <span class="mobile-cart-badge" id="mobileCartBadge">0</span>
+        </a>
+        <a href="tracking.html" class="mobile-nav-btn">
+            <i class="fas fa-truck"></i><span>Orders</span>
+        </a>
+    </nav>
+
+    <!-- BANNER SLIDER -->
+    <section class="banner-slider">
+        <div class="slider-container" id="sliderContainer">
+            <div class="slide active">
+                <div class="slide-content" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="slide-text">
+                        <h2>Big Billion Days</h2>
+                        <p>Up to 80% Off on Electronics</p>
+                        <button class="btn-primary" onclick="filterCategory('electronics')">Shop Now</button>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&h=300&fit=crop" alt="Electronics Sale">
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-content" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <div class="slide-text">
+                        <h2>Fashion Fiesta</h2>
+                        <p>Trendy Styles at Best Prices</p>
+                        <button class="btn-primary" onclick="filterCategory('fashion')">Explore</button>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop" alt="Fashion Sale">
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-content" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <div class="slide-text">
+                        <h2>Home Makeover</h2>
+                        <p>Refresh Your Living Space</p>
+                        <button class="btn-primary" onclick="filterCategory('home')">Discover</button>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop" alt="Home Sale">
+                </div>
+            </div>
+        </div>
+        <button class="slider-btn prev" onclick="changeSlide(-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slider-btn next" onclick="changeSlide(1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slider-dots" id="sliderDots"></div>
+    </section>
+
+    <!-- DEALS SECTION -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2><i class="fas fa-fire" style="color:#ff6161;"></i> Deals of the Day</h2>
+                <div class="countdown" id="countdown"></div>
+            </div>
+            <div class="products-scroll" id="dealsContainer"></div>
+        </div>
+    </section>
+
+    <!-- ALL PRODUCTS -->
+    <section class="section" id="allProducts">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="sectionTitle">All Products</h2>
+                <select id="sortSelect" onchange="sortProducts()">
+                    <option value="default">Sort By</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="rating">Rating</option>
+                    <option value="discount">Discount</option>
+                </select>
+            </div>
+            <div class="products-grid" id="productsGrid"></div>
+        </div>
+    </section>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>ABOUT</h4>
+                    <a href="#">Contact Us</a>
+                    <a href="#">About Us</a>
+                    <a href="#">Careers</a>
+                </div>
+                <div class="footer-col">
+                    <h4>HELP</h4>
+                    <a href="#">Payments</a>
+                    <a href="#">Shipping</a>
+                    <a href="#">Cancellation</a>
+                </div>
+                <div class="footer-col">
+                    <h4>POLICY</h4>
+                    <a href="#">Return Policy</a>
+                    <a href="#">Terms of Use</a>
+                    <a href="#">Privacy</a>
+                </div>
+                <div class="footer-col">
+                    <h4>SOCIAL</h4>
+                    <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
+                    <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+                    <a href="#"><i class="fab fa-youtube"></i> YouTube</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 FlipStore. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCartBadge();
+            renderDeals();
+            renderProducts();
+            initSlider();
+            startCountdown();
+        });
+
+        function scrollToCategories() {
+            document.querySelector('.header-categories').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function searchProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            filteredProducts = products.filter(p =>
+                p.name.toLowerCase().includes(query) ||
+                p.brand.toLowerCase().includes(query) ||
+                p.category.toLowerCase().includes(query)
+            );
+            document.getElementById('sectionTitle').textContent = `Results for "${query}"`;
+            renderProducts();
+            document.getElementById('allProducts').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipStore - Online Shopping</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-top">
+            <div class="container header-flex">
+                <div class="logo" onclick="window.location='index.html'">
+                    <i class="fas fa-bolt"></i>
+                    <span>Flip<strong>Store</strong></span>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search for products, brands and more...">
+                    <button onclick="searchProducts()"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="header-actions">
+                    <a href="index.html" class="btn-header">
+                        <i class="fas fa-home"></i><span>Home</span>
+                    </a>
+                    <a href="cart.html" class="btn-header">
+                        <i class="fas fa-shopping-cart"></i><span>Cart</span>
+                        <span class="cart-badge" id="cartBadge">0</span>
+                    </a>
+                    <a href="tracking.html" class="btn-header">
+                        <i class="fas fa-truck"></i><span>Orders</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="header-categories">
+            <div class="container">
+                <nav class="categories-nav">
+                    <button class="cat-btn active" onclick="filterCategory('all', this)">All</button>
+                    <button class="cat-btn" onclick="filterCategory('electronics', this)">Electronics</button>
+                    <button class="cat-btn" onclick="filterCategory('fashion', this)">Fashion</button>
+                    <button class="cat-btn" onclick="filterCategory('home', this)">Home & Furniture</button>
+                    <button class="cat-btn" onclick="filterCategory('appliances', this)">Appliances</button>
+                    <button class="cat-btn" onclick="filterCategory('beauty', this)">Beauty</button>
+                    <button class="cat-btn" onclick="filterCategory('sports', this)">Sports</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav class="mobile-bottom-nav">
+        <a href="index.html" class="mobile-nav-btn active">
+            <i class="fas fa-home"></i><span>Home</span>
+        </a>
+        <button class="mobile-nav-btn" onclick="scrollToCategories()">
+            <i class="fas fa-th-large"></i><span>Categories</span>
+        </button>
+        <a href="cart.html" class="mobile-nav-btn">
+            <i class="fas fa-shopping-cart"></i><span>Cart</span>
+            <span class="mobile-cart-badge" id="mobileCartBadge">0</span>
+        </a>
+        <a href="tracking.html" class="mobile-nav-btn">
+            <i class="fas fa-truck"></i><span>Orders</span>
+        </a>
+    </nav>
+
+    <!-- BANNER SLIDER -->
+    <section class="banner-slider">
+        <div class="slider-container" id="sliderContainer">
+            <div class="slide active">
+                <div class="slide-content" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="slide-text">
+                        <h2>Big Billion Days</h2>
+                        <p>Up to 80% Off on Electronics</p>
+                        <button class="btn-primary" onclick="filterCategory('electronics')">Shop Now</button>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&h=300&fit=crop" alt="Electronics Sale">
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-content" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <div class="slide-text">
+                        <h2>Fashion Fiesta</h2>
+                        <p>Trendy Styles at Best Prices</p>
+                        <button class="btn-primary" onclick="filterCategory('fashion')">Explore</button>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop" alt="Fashion Sale">
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-content" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <div class="slide-text">
+                        <h2>Home Makeover</h2>
+                        <p>Refresh Your Living Space</p>
+                        <button class="btn-primary" onclick="filterCategory('home')">Discover</button>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop" alt="Home Sale">
+                </div>
+            </div>
+        </div>
+        <button class="slider-btn prev" onclick="changeSlide(-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slider-btn next" onclick="changeSlide(1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slider-dots" id="sliderDots"></div>
+    </section>
+
+    <!-- DEALS SECTION -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2><i class="fas fa-fire" style="color:#ff6161;"></i> Deals of the Day</h2>
+                <div class="countdown" id="countdown"></div>
+            </div>
+            <div class="products-scroll" id="dealsContainer"></div>
+        </div>
+    </section>
+
+    <!-- ALL PRODUCTS -->
+    <section class="section" id="allProducts">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="sectionTitle">All Products</h2>
+                <select id="sortSelect" onchange="sortProducts()">
+                    <option value="default">Sort By</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="rating">Rating</option>
+                    <option value="discount">Discount</option>
+                </select>
+            </div>
+            <div class="products-grid" id="productsGrid"></div>
+        </div>
+    </section>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>ABOUT</h4>
+                    <a href="#">Contact Us</a>
+                    <a href="#">About Us</a>
+                    <a href="#">Careers</a>
+                </div>
+                <div class="footer-col">
+                    <h4>HELP</h4>
+                    <a href="#">Payments</a>
+                    <a href="#">Shipping</a>
+                    <a href="#">Cancellation</a>
+                </div>
+                <div class="footer-col">
+                    <h4>POLICY</h4>
+                    <a href="#">Return Policy</a>
+                    <a href="#">Terms of Use</a>
+                    <a href="#">Privacy</a>
+                </div>
+                <div class="footer-col">
+                    <h4>SOCIAL</h4>
+                    <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
+                    <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+                    <a href="#"><i class="fab fa-youtube"></i> YouTube</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 FlipStore. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCartBadge();
+            renderDeals();
+            renderProducts();
+            initSlider();
+            startCountdown();
+        });
+
+        function scrollToCategories() {
+            document.querySelector('.header-categories').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function searchProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            filteredProducts = products.filter(p =>
+                p.name.toLowerCase().includes(query) ||
+                p.brand.toLowerCase().includes(query) ||
+                p.category.toLowerCase().includes(query)
+            );
+            document.getElementById('sectionTitle').textContent = `Results for "${query}"`;
+            renderProducts();
+            document.getElementById('allProducts').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
