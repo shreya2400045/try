@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Review Order | FlipShop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-top">
+            <div class="container header-flex">
+                <a href="index.html" class="logo"><i class="fas fa-bolt"></i> Flip<span>Shop</span></a>
+                <div class="search-bar"><input type="text" id="searchInput" placeholder="Search for products"><button id="searchBtn"><i class="fas fa-search"></i></button></div>
+                <nav class="header-nav">
+                    <a href="index.html" class="nav-link"><i class="fas fa-home"></i> <span>Home</span></a>
+                    <a href="products.html" class="nav-link"><i class="fas fa-th-large"></i> <span>Products</span></a>
+                    <a href="cart.html" class="nav-link cart-link"><i class="fas fa-shopping-cart"></i> <span>Cart</span><span class="cart-badge" id="cartBadge">0</span></a>
+                    <a href="tracking.html" class="nav-link"><i class="fas fa-truck"></i> <span>Track</span></a>
+                </nav>
+                <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+        <div class="mobile-nav" id="mobileNav">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="products.html"><i class="fas fa-th-large"></i> Products</a>
+            <a href="cart.html"><i class="fas fa-shopping-cart"></i> Cart</a>
+            <a href="tracking.html"><i class="fas fa-truck"></i> Track Order</a>
+        </div>
+    </header>
+
+    <div class="checkout-steps">
+        <div class="container">
+            <div class="steps-multi">
+                <div class="step-m completed"><div class="step-m-icon"><i class="fas fa-check"></i></div><div class="step-m-info"><span class="step-m-label">Step 1</span><span class="step-m-title">Personal</span></div></div>
+                <div class="step-m-connector active"></div>
+                <div class="step-m completed"><div class="step-m-icon"><i class="fas fa-check"></i></div><div class="step-m-info"><span class="step-m-label">Step 2</span><span class="step-m-title">Address</span></div></div>
+                <div class="step-m-connector active"></div>
+                <div class="step-m completed"><div class="step-m-icon"><i class="fas fa-check"></i></div><div class="step-m-info"><span class="step-m-label">Step 3</span><span class="step-m-title">City</span></div></div>
+                <div class="step-m-connector active"></div>
+                <div class="step-m completed"><div class="step-m-icon"><i class="fas fa-check"></i></div><div class="step-m-info"><span class="step-m-label">Step 4</span><span class="step-m-title">Contact</span></div></div>
+                <div class="step-m-connector active"></div>
+                <div class="step-m active"><div class="step-m-icon"><i class="fas fa-clipboard-check"></i></div><div class="step-m-info"><span class="step-m-label">Step 5</span><span class="step-m-title">Review</span></div></div>
+                <div class="step-m-connector"></div>
+                <div class="step-m"><div class="step-m-icon"><i class="fas fa-credit-card"></i></div><div class="step-m-info"><span class="step-m-label">Step 6</span><span class="step-m-title">Payment</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="checkout-page">
+        <div class="container">
+            <div class="checkout-wizard-layout">
+                <div class="wizard-card">
+                    <div class="wizard-card-header">
+                        <div class="wizard-card-icon"><i class="fas fa-clipboard-check"></i></div>
+                        <div><h2>Review Your Order</h2><p>Please verify all details before payment</p></div>
+                    </div>
+                    <div class="wizard-card-body" style="padding:0;">
+                        <div class="review-section">
+                            <div class="review-section-header">
+                                <h3><i class="fas fa-user-circle"></i> Shipping Details</h3>
+                                <a href="checkout-step1.html" class="edit-btn"><i class="fas fa-pencil-alt"></i> Edit</a>
+                            </div>
+                            <div class="review-info-grid" id="reviewShipping"></div>
+                        </div>
+                        <div class="review-section">
+                            <div class="review-section-header">
+                                <h3><i class="fas fa-box"></i> Order Items</h3>
+                                <a href="cart.html" class="edit-btn"><i class="fas fa-pencil-alt"></i> Edit Cart</a>
+                            </div>
+                            <div id="reviewItems"></div>
+                        </div>
+                        <div class="review-section">
+                            <div class="review-section-header">
+                                <h3><i class="fas fa-receipt"></i> Price Summary</h3>
+                            </div>
+                            <div id="reviewPricing"></div>
+                        </div>
+                    </div>
+                    <div class="wizard-card-footer">
+                        <a href="checkout-step4.html" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Previous</a>
+                        <a href="checkout-step6.html" class="btn btn-primary">Proceed to Payment <i class="fas fa-lock"></i></a>
+                    </div>
+                </div>
+                <div id="orderSidebar"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; 2024 FlipShop. All rights reserved.</p></div></div></footer>
+    <nav class="mobile-bottom-nav">
+        <a href="index.html" class="bottom-nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="products.html" class="bottom-nav-item"><i class="fas fa-th-large"></i><span>Products</span></a>
+        <a href="cart.html" class="bottom-nav-item"><i class="fas fa-shopping-cart"></i><span>Cart</span><span class="bottom-badge" id="bottomCartBadge">0</span></a>
+        <a href="tracking.html" class="bottom-nav-item"><i class="fas fa-truck"></i><span>Track</span></a>
+    </nav>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartBadge();
+            renderCheckoutSidebar('orderSidebar');
+
+            const d = getCheckoutData();
+            const c = getCartCalculations();
+
+            document.getElementById('reviewShipping').innerHTML = `
+                <div class="review-info-item">
+                    <i class="fas fa-user"></i>
+                    <div><label>Full Name</label><p>${(d.firstName||'')} ${(d.lastName||'')}</p></div>
+                </div>
+                <div class="review-info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <label>Address</label>
+                        <p>${d.address1||''}${d.address2 ? ', '+d.address2 : ''}</p>
+                        <p>${d.city||''}, ${d.state||''} - ${d.pincode||''}</p>
+                    </div>
+                </div>
+                <div class="review-info-item">
+                    <i class="fas fa-envelope"></i>
+                    <div><label>Email</label><p>${d.email||''}</p></div>
+                </div>
+                <div class="review-info-item">
+                    <i class="fas fa-phone"></i>
+                    <div><label>Phone</label><p>+91 ${d.phone||''}</p></div>
+                </div>
+            `;
+
+            document.getElementById('reviewItems').innerHTML = c.cartItems.map(item => `
+                <div class="review-order-item">
+                    <img src="${item.image}" alt="${item.name}">
+                    <div class="review-order-item-info">
+                        <p class="review-item-name">${item.name}</p>
+                        ${item.selectedSize ? `<span class="review-item-size"><i class="fas fa-ruler"></i> Size: ${item.selectedSize}</span>` : ''}
+                        <span class="review-item-qty">Qty: ${item.qty}</span>
+                    </div>
+                    <span class="review-item-price">₹${(item.price*item.qty).toLocaleString('en-IN')}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('reviewPricing').innerHTML = `
+                <div class="summary-row"><span>MRP Total</span><span>₹${c.totalOriginal.toLocaleString('en-IN')}</span></div>
+                <div class="summary-row discount"><span>Discount</span><span>-₹${c.discount.toLocaleString('en-IN')}</span></div>
+                <div class="summary-row"><span>Shipping</span><span class="${c.shipping===0?'free-delivery':''}">${c.shipping===0?'FREE':'₹'+c.shipping}</span></div>
+                <div class="summary-divider"></div>
+                <div class="summary-row total"><span>Total Payable</span><span>₹${c.total.toLocaleString('en-IN')}</span></div>
+                <div class="summary-savings">You're saving ₹${c.discount.toLocaleString('en-IN')} on this order! 🎉</div>
+            `;
+        });
+    </script>
+</body>
+</html>

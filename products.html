@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - FlipShop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-top">
+            <div class="container header-flex">
+                <a href="index.html" class="logo"><i class="fas fa-bolt"></i> Flip<span>Shop</span></a>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search for products, brands and more">
+                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                </div>
+                <nav class="header-nav">
+                    <a href="index.html" class="nav-link"><i class="fas fa-home"></i> <span>Home</span></a>
+                    <a href="products.html" class="nav-link active"><i class="fas fa-th-large"></i> <span>Products</span></a>
+                    <a href="cart.html" class="nav-link cart-link"><i class="fas fa-shopping-cart"></i> <span>Cart</span><span class="cart-badge" id="cartBadge">0</span></a>
+                    <a href="tracking.html" class="nav-link"><i class="fas fa-truck"></i> <span>Track</span></a>
+                </nav>
+                <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+        <div class="mobile-nav" id="mobileNav">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="products.html" class="active"><i class="fas fa-th-large"></i> Products</a>
+            <a href="cart.html"><i class="fas fa-shopping-cart"></i> Cart</a>
+            <a href="tracking.html"><i class="fas fa-truck"></i> Track Order</a>
+        </div>
+    </header>
+
+    <div class="breadcrumb">
+        <div class="container">
+            <a href="index.html">Home</a> <i class="fas fa-chevron-right"></i> <span>Products</span>
+        </div>
+    </div>
+
+    <div class="products-page">
+        <div class="container">
+            <div class="products-layout">
+                <aside class="filter-sidebar" id="filterSidebar">
+                    <div class="filter-header">
+                        <h3>Filters</h3>
+                        <button class="clear-filters" id="clearFilters">Clear All</button>
+                        <button class="close-filter-btn" id="closeFilterBtn"><i class="fas fa-times"></i></button>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Categories</h4>
+                        <label class="filter-checkbox"><input type="checkbox" name="category" value="electronics"> Electronics</label>
+                        <label class="filter-checkbox"><input type="checkbox" name="category" value="fashion"> Fashion</label>
+                        <label class="filter-checkbox"><input type="checkbox" name="category" value="home"> Home & Furniture</label>
+                        <label class="filter-checkbox"><input type="checkbox" name="category" value="beauty"> Beauty</label>
+                        <label class="filter-checkbox"><input type="checkbox" name="category" value="sports"> Sports</label>
+                        <label class="filter-checkbox"><input type="checkbox" name="category" value="books"> Books</label>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Price Range</h4>
+                        <div class="price-range">
+                            <input type="range" id="priceRange" min="0" max="100000" value="100000" step="500">
+                            <div class="price-labels"><span>₹0</span><span id="priceValue">₹1,00,000</span></div>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Rating</h4>
+                        <label class="filter-checkbox"><input type="radio" name="rating" value="4"> 4★ & above</label>
+                        <label class="filter-checkbox"><input type="radio" name="rating" value="3"> 3★ & above</label>
+                        <label class="filter-checkbox"><input type="radio" name="rating" value="2"> 2★ & above</label>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Discount</h4>
+                        <label class="filter-checkbox"><input type="checkbox" name="discount" value="10"> 10% or more</label>
+                        <label class="filter-checkbox"><input type="checkbox" name="discount" value="20"> 20% or more</label>
+                        <label class="filter-checkbox"><input type="checkbox" name="discount" value="30"> 30% or more</label>
+                        <label class="filter-checkbox"><input type="checkbox" name="discount" value="50"> 50% or more</label>
+                    </div>
+
+                    <button class="btn btn-primary btn-block apply-filters-btn" id="applyFilters">Apply Filters</button>
+                </aside>
+
+                <div class="filter-overlay" id="filterOverlay"></div>
+
+                <div class="products-main">
+                    <div class="products-toolbar">
+                        <div class="results-count"><span id="resultsCount">0</span> products found</div>
+                        <div class="toolbar-right">
+                            <button class="filter-toggle-btn" id="filterToggleBtn"><i class="fas fa-filter"></i> Filters</button>
+                            <select id="sortSelect" class="sort-select">
+                                <option value="relevance">Relevance</option>
+                                <option value="price-low">Price: Low to High</option>
+                                <option value="price-high">Price: High to Low</option>
+                                <option value="rating">Rating</option>
+                                <option value="discount">Discount</option>
+                                <option value="name">Name A-Z</option>
+                            </select>
+                            <div class="view-toggle">
+                                <button class="view-btn active" data-view="grid"><i class="fas fa-th"></i></button>
+                                <button class="view-btn" data-view="list"><i class="fas fa-list"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="products-grid" id="productsGrid"></div>
+
+                    <div class="no-products" id="noProducts" style="display:none;">
+                        <i class="fas fa-search"></i>
+                        <h3>No products found</h3>
+                        <p>Try adjusting your filters or search query</p>
+                    </div>
+
+                    <div class="pagination" id="pagination"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom"><p>&copy; 2024 FlipShop. All rights reserved.</p></div>
+        </div>
+    </footer>
+
+    <nav class="mobile-bottom-nav">
+        <a href="index.html" class="bottom-nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="products.html" class="bottom-nav-item active"><i class="fas fa-th-large"></i><span>Products</span></a>
+        <a href="cart.html" class="bottom-nav-item"><i class="fas fa-shopping-cart"></i><span>Cart</span><span class="bottom-badge" id="bottomCartBadge">0</span></a>
+        <a href="tracking.html" class="bottom-nav-item"><i class="fas fa-truck"></i><span>Track</span></a>
+    </nav>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentView = 'grid';
+            let allProducts = getProducts();
+            let filteredProducts = [...allProducts];
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryParam = urlParams.get('category');
+            if (categoryParam) {
+                const checkbox = document.querySelector(`input[name="category"][value="${categoryParam}"]`);
+                if (checkbox) checkbox.checked = true;
+                filteredProducts = allProducts.filter(p => p.category === categoryParam);
+            }
+
+            renderProducts(filteredProducts);
+            updateCartBadge();
+
+            document.getElementById('searchBtn').addEventListener('click', searchProducts);
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') searchProducts();
+            });
+
+            function searchProducts() {
+                const query = document.getElementById('searchInput').value.toLowerCase();
+                if (query) {
+                    filteredProducts = allProducts.filter(p =>
+                        p.name.toLowerCase().includes(query) ||
+                        p.category.toLowerCase().includes(query) ||
+                        p.brand.toLowerCase().includes(query)
+                    );
+                } else {
+                    filteredProducts = [...allProducts];
+                }
+                renderProducts(filteredProducts);
+            }
+
+            document.getElementById('sortSelect').addEventListener('change', function() {
+                const sortBy = this.value;
+                switch(sortBy) {
+                    case 'price-low': filteredProducts.sort((a,b) => a.price - b.price); break;
+                    case 'price-high': filteredProducts.sort((a,b) => b.price - a.price); break;
+                    case 'rating': filteredProducts.sort((a,b) => b.rating - a.rating); break;
+                    case 'discount': filteredProducts.sort((a,b) => b.discount - a.discount); break;
+                    case 'name': filteredProducts.sort((a,b) => a.name.localeCompare(b.name)); break;
+                }
+                renderProducts(filteredProducts);
+            });
+
+            document.getElementById('applyFilters').addEventListener('click', applyFilters);
+            document.getElementById('clearFilters').addEventListener('click', function() {
+                document.querySelectorAll('.filter-sidebar input').forEach(i => {
+                    if (i.type === 'checkbox' || i.type === 'radio') i.checked = false;
+                    if (i.type === 'range') i.value = i.max;
+                });
+                document.getElementById('priceValue').textContent = '₹1,00,000';
+                filteredProducts = [...allProducts];
+                renderProducts(filteredProducts);
+            });
+
+            function applyFilters() {
+                const selectedCategories = [...document.querySelectorAll('input[name="category"]:checked')].map(i => i.value);
+                const maxPrice = parseInt(document.getElementById('priceRange').value);
+                const selectedRating = document.querySelector('input[name="rating"]:checked');
+                const minRating = selectedRating ? parseInt(selectedRating.value) : 0;
+                const selectedDiscounts = [...document.querySelectorAll('input[name="discount"]:checked')].map(i => parseInt(i.value));
+                const minDiscount = selectedDiscounts.length ? Math.min(...selectedDiscounts) : 0;
+
+                filteredProducts = allProducts.filter(p => {
+                    if (selectedCategories.length && !selectedCategories.includes(p.category)) return false;
+                    if (p.price > maxPrice) return false;
+                    if (p.rating < minRating) return false;
+                    if (p.discount < minDiscount) return false;
+                    return true;
+                });
+
+                renderProducts(filteredProducts);
+                document.getElementById('filterSidebar').classList.remove('open');
+                document.getElementById('filterOverlay').classList.remove('show');
+            }
+
+            document.getElementById('priceRange').addEventListener('input', function() {
+                document.getElementById('priceValue').textContent = '₹' + parseInt(this.value).toLocaleString('en-IN');
+            });
+
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentView = this.dataset.view;
+                    const grid = document.getElementById('productsGrid');
+                    grid.className = currentView === 'list' ? 'products-list' : 'products-grid';
+                });
+            });
+
+            document.getElementById('filterToggleBtn').addEventListener('click', function() {
+                document.getElementById('filterSidebar').classList.add('open');
+                document.getElementById('filterOverlay').classList.add('show');
+            });
+            document.getElementById('closeFilterBtn').addEventListener('click', function() {
+                document.getElementById('filterSidebar').classList.remove('open');
+                document.getElementById('filterOverlay').classList.remove('show');
+            });
+            document.getElementById('filterOverlay').addEventListener('click', function() {
+                document.getElementById('filterSidebar').classList.remove('open');
+                this.classList.remove('show');
+            });
+
+            function renderProducts(products) {
+                const grid = document.getElementById('productsGrid');
+                document.getElementById('resultsCount').textContent = products.length;
+
+                if (products.length === 0) {
+                    grid.style.display = 'none';
+                    document.getElementById('noProducts').style.display = 'flex';
+                    return;
+                }
+
+                grid.style.display = '';
+                document.getElementById('noProducts').style.display = 'none';
+                renderProductCards('productsGrid', products);
+            }
+        });
+    </script>
+</body>
+</html>

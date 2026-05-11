@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order - FlipShop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-top">
+            <div class="container header-flex">
+                <a href="index.html" class="logo"><i class="fas fa-bolt"></i> Flip<span>Shop</span></a>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search for products, brands and more">
+                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                </div>
+                <nav class="header-nav">
+                    <a href="index.html" class="nav-link"><i class="fas fa-home"></i> <span>Home</span></a>
+                    <a href="products.html" class="nav-link"><i class="fas fa-th-large"></i> <span>Products</span></a>
+                    <a href="cart.html" class="nav-link cart-link"><i class="fas fa-shopping-cart"></i> <span>Cart</span><span class="cart-badge" id="cartBadge">0</span></a>
+                    <a href="tracking.html" class="nav-link active"><i class="fas fa-truck"></i> <span>Track</span></a>
+                </nav>
+                <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+        <div class="mobile-nav" id="mobileNav">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="products.html"><i class="fas fa-th-large"></i> Products</a>
+            <a href="cart.html"><i class="fas fa-shopping-cart"></i> Cart</a>
+            <a href="tracking.html" class="active"><i class="fas fa-truck"></i> Track Order</a>
+        </div>
+    </header>
+
+    <div class="tracking-page">
+        <div class="container">
+            <div class="track-search-section">
+                <div class="form-card" style="background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:30px;text-align:center;max-width:700px;margin:0 auto;">
+                    <h2 style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;">
+                        <i class="fas fa-search-location" style="color:var(--primary);"></i> Track Your Order
+                    </h2>
+                    <p style="color:var(--gray);margin-bottom:20px;">Enter your order ID to track your shipment</p>
+                    <div class="track-search-bar">
+                        <input type="text" id="trackInput" placeholder="Enter Order ID (e.g., FS12345678)">
+                        <button class="btn btn-primary" id="trackBtn">
+                            <i class="fas fa-search"></i> Track
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tracking-result" id="trackingResult" style="display:none;"></div>
+
+            <div class="my-orders-section">
+                <h2><i class="fas fa-box"></i> My Orders</h2>
+                <div id="myOrders"></div>
+                <div class="no-orders" id="noOrders" style="display:none;">
+                    <i class="fas fa-box-open"></i>
+                    <h3>No orders yet</h3>
+                    <p>Start shopping to see your orders here</p>
+                    <a href="products.html" class="btn btn-primary">Start Shopping</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>About FlipShop</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Help</h4>
+                    <ul>
+                        <li><a href="#">Payments</a></li>
+                        <li><a href="#">Shipping</a></li>
+                        <li><a href="#">Returns</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Policy</h4>
+                    <ul>
+                        <li><a href="#">Return Policy</a></li>
+                        <li><a href="#">Terms of Use</a></li>
+                        <li><a href="#">Privacy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Connect With Us</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom"><p>&copy; 2024 FlipShop. All rights reserved.</p></div>
+        </div>
+    </footer>
+
+    <nav class="mobile-bottom-nav">
+        <a href="index.html" class="bottom-nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="products.html" class="bottom-nav-item"><i class="fas fa-th-large"></i><span>Products</span></a>
+        <a href="cart.html" class="bottom-nav-item"><i class="fas fa-shopping-cart"></i><span>Cart</span><span class="bottom-badge" id="bottomCartBadge">0</span></a>
+        <a href="tracking.html" class="bottom-nav-item active"><i class="fas fa-truck"></i><span>Track</span></a>
+    </nav>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartBadge();
+            loadOrders();
+
+            document.getElementById('trackBtn').addEventListener('click', trackOrder);
+            document.getElementById('trackInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') trackOrder();
+            });
+        });
+
+        function loadOrders() {
+            const orders = JSON.parse(localStorage.getItem('flipshop_orders') || '[]');
+            if (orders.length === 0) {
+                document.getElementById('noOrders').style.display = 'flex';
+                return;
+            }
+            document.getElementById('noOrders').style.display = 'none';
+
+            const ordersHtml = [...orders].reverse().map(order => {
+                const orderDate = new Date(order.date);
+                const statusInfo = getStatusInfo(order);
+                const itemsHtml = order.items.slice(0, 3).map(item => `
+                    <div class="order-item-mini">
+                        <img src="${item.image}" alt="${item.name}">
+                        <div>
+                            <p>${item.name}</p>
+                            <span>Qty: ${item.qty} × ₹${item.price.toLocaleString('en-IN')}</span>
+                        </div>
+                    </div>
+                `).join('');
+
+                return `
+                <div class="order-card">
+                    <div class="order-card-header">
+                        <div>
+                            <span class="order-id">Order #${order.id}</span>
+                            <span class="order-date">${orderDate.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</span>
+                        </div>
+                        <span class="order-status ${statusInfo.class}">${statusInfo.text}</span>
+                    </div>
+                    <div class="order-card-body">
+                        ${itemsHtml}
+                        ${order.items.length > 3 ? `<p class="more-items">+${order.items.length - 3} more item(s)</p>` : ''}
+                    </div>
+                    <div class="order-card-footer">
+                        <div class="order-total"><span>Total: </span><strong>₹${order.total.toLocaleString('en-IN')}</strong></div>
+                        <div class="order-actions">
+                            <button class="btn btn-outline btn-sm" onclick="showTracking('${order.id}')">
+                                <i class="fas fa-truck"></i> Track
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+
+            document.getElementById('myOrders').innerHTML = ordersHtml;
+        }
+
+        function getStatusInfo(order) {
+            const hoursSinceOrder = (Date.now() - new Date(order.date).getTime()) / 3600000;
+            if (hoursSinceOrder < 1) return { text: 'Confirmed', class: 'status-confirmed', step: 1 };
+            if (hoursSinceOrder < 3) return { text: 'Processing', class: 'status-processing', step: 2 };
+            if (hoursSinceOrder < 8) return { text: 'Shipped', class: 'status-shipped', step: 3 };
+            if (hoursSinceOrder < 24) return { text: 'Out for Delivery', class: 'status-out', step: 4 };
+            return { text: 'Delivered', class: 'status-delivered', step: 5 };
+        }
+
+        function trackOrder() {
+            const orderId = document.getElementById('trackInput').value.trim();
+            if (!orderId) { showToast('Please enter an Order ID', 'error'); return; }
+            showTracking(orderId);
+        }
+
+        function showTracking(orderId) {
+            const orders = JSON.parse(localStorage.getItem('flipshop_orders') || '[]');
+            const order = orders.find(o => o.id === orderId);
+            const resultDiv = document.getElementById('trackingResult');
+
+            if (!order) {
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `
+                    <div class="tracking-detail-card">
+                        <div class="tracking-not-found">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Order Not Found</h3>
+                            <p>No order found with ID: <strong>${orderId}</strong></p>
+                        </div>
+                    </div>`;
+                resultDiv.scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
+            const statusInfo = getStatusInfo(order);
+            const orderDate = new Date(order.date);
+            const expectedDate = new Date(order.expectedDelivery);
+            const paymentLabels = { upi:'UPI', card:'Credit/Debit Card', netbanking:'Net Banking', wallet:'Wallet', cod:'Cash on Delivery' };
+
+            const steps = [
+                { icon: 'fa-check-circle', title: 'Order Confirmed', desc: orderDate.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) },
+                { icon: 'fa-cog', title: 'Processing', desc: 'Your order is being processed at our warehouse' },
+                { icon: 'fa-shipping-fast', title: 'Shipped', desc: 'Package picked up by courier partner' },
+                { icon: 'fa-truck', title: 'Out for Delivery', desc: 'Your package is on its way to you' },
+                { icon: 'fa-home', title: 'Delivered', desc: 'Expected: ' + expectedDate.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) }
+            ];
+
+            const stepsHtml = steps.map((step, i) => {
+                let stepClass = '';
+                if (i + 1 < statusInfo.step) stepClass = 'completed';
+                else if (i + 1 === statusInfo.step) stepClass = 'active';
+                return `
+                    <div class="tracking-step ${stepClass}">
+                        <div class="tracking-step-icon"><i class="fas ${step.icon}"></i></div>
+                        <div class="tracking-step-info">
+                            <strong>${step.title}</strong>
+                            <span>${step.desc}</span>
+                        </div>
+                    </div>`;
+            }).join('');
+
+            const itemsHtml = order.items.map(item => `
+                <div class="tracking-item">
+                    <img src="${item.image}" alt="${item.name}">
+                    <div>
+                        <p>${item.name}</p>
+                        ${item.selectedSize ? `<span style="font-size:12px;color:var(--primary);">Size: ${item.selectedSize}</span>` : ''}
+                        <span>Qty: ${item.qty} | ₹${(item.price*item.qty).toLocaleString('en-IN')}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <div class="tracking-detail-card">
+                    <div class="tracking-header">
+                        <div>
+                            <h2>Order #${order.id}</h2>
+                            <p>Placed on ${orderDate.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</p>
+                        </div>
+                        <span class="order-status ${statusInfo.class}">${statusInfo.text}</span>
+                    </div>
+                    <div class="tracking-timeline">${stepsHtml}</div>
+                    <div class="tracking-details-grid">
+                        <div class="tracking-info-card">
+                            <h4><i class="fas fa-box"></i> Order Items</h4>
+                            ${itemsHtml}
+                            <div class="tracking-total"><strong>Total: ₹${order.total.toLocaleString('en-IN')}</strong></div>
+                        </div>
+                        <div class="tracking-info-card">
+                            <h4><i class="fas fa-map-marker-alt"></i> Shipping Address</h4>
+                            <p><strong>${order.shipping.name}</strong></p>
+                            <p>${order.shipping.address}</p>
+                            <p>${order.shipping.city}, ${order.shipping.state} - ${order.shipping.pincode}</p>
+                            <p><i class="fas fa-phone"></i> +91 ${order.shipping.phone}</p>
+                            <p><i class="fas fa-envelope"></i> ${order.shipping.email}</p>
+                        </div>
+                        <div class="tracking-info-card">
+                            <h4><i class="fas fa-credit-card"></i> Payment</h4>
+                            <p><strong>Method:</strong> ${paymentLabels[order.payment]||order.payment}</p>
+                            <p><strong>Status:</strong> <span style="color:var(--success);">Paid ✓</span></p>
+                            <p><strong>Amount:</strong> ₹${order.total.toLocaleString('en-IN')}</p>
+                        </div>
+                    </div>
+                </div>`;
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Personal Info | FlipShop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-top">
+            <div class="container header-flex">
+                <a href="index.html" class="logo"><i class="fas fa-bolt"></i> Flip<span>Shop</span></a>
+                <div class="search-bar"><input type="text" id="searchInput" placeholder="Search for products"><button id="searchBtn"><i class="fas fa-search"></i></button></div>
+                <nav class="header-nav">
+                    <a href="index.html" class="nav-link"><i class="fas fa-home"></i> <span>Home</span></a>
+                    <a href="products.html" class="nav-link"><i class="fas fa-th-large"></i> <span>Products</span></a>
+                    <a href="cart.html" class="nav-link cart-link"><i class="fas fa-shopping-cart"></i> <span>Cart</span><span class="cart-badge" id="cartBadge">0</span></a>
+                    <a href="tracking.html" class="nav-link"><i class="fas fa-truck"></i> <span>Track</span></a>
+                </nav>
+                <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+        <div class="mobile-nav" id="mobileNav">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="products.html"><i class="fas fa-th-large"></i> Products</a>
+            <a href="cart.html"><i class="fas fa-shopping-cart"></i> Cart</a>
+            <a href="tracking.html"><i class="fas fa-truck"></i> Track Order</a>
+        </div>
+    </header>
+
+    <div class="checkout-steps">
+        <div class="container">
+            <div class="steps-multi">
+                <div class="step-m active"><div class="step-m-icon"><i class="fas fa-user"></i></div><div class="step-m-info"><span class="step-m-label">Step 1</span><span class="step-m-title">Personal Info</span></div></div>
+                <div class="step-m-connector"></div>
+                <div class="step-m"><div class="step-m-icon"><i class="fas fa-map-marker-alt"></i></div><div class="step-m-info"><span class="step-m-label">Step 2</span><span class="step-m-title">Address</span></div></div>
+                <div class="step-m-connector"></div>
+                <div class="step-m"><div class="step-m-icon"><i class="fas fa-city"></i></div><div class="step-m-info"><span class="step-m-label">Step 3</span><span class="step-m-title">City & State</span></div></div>
+                <div class="step-m-connector"></div>
+                <div class="step-m"><div class="step-m-icon"><i class="fas fa-phone-alt"></i></div><div class="step-m-info"><span class="step-m-label">Step 4</span><span class="step-m-title">Contact</span></div></div>
+                <div class="step-m-connector"></div>
+                <div class="step-m"><div class="step-m-icon"><i class="fas fa-clipboard-check"></i></div><div class="step-m-info"><span class="step-m-label">Step 5</span><span class="step-m-title">Review</span></div></div>
+                <div class="step-m-connector"></div>
+                <div class="step-m"><div class="step-m-icon"><i class="fas fa-credit-card"></i></div><div class="step-m-info"><span class="step-m-label">Step 6</span><span class="step-m-title">Payment</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="checkout-page">
+        <div class="container">
+            <div class="checkout-wizard-layout">
+                <div class="wizard-card">
+                    <div class="wizard-card-header">
+                        <div class="wizard-card-icon"><i class="fas fa-user"></i></div>
+                        <div><h2>Personal Information</h2><p>Let's start with your name</p></div>
+                    </div>
+                    <div class="wizard-card-body">
+                        <div class="form-group">
+                            <label for="firstName">First Name <span class="required">*</span></label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="firstName" placeholder="Enter your first name">
+                            </div>
+                            <span class="error-text" id="firstNameError"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name <span class="required">*</span></label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-user-tag"></i>
+                                <input type="text" id="lastName" placeholder="Enter your last name">
+                            </div>
+                            <span class="error-text" id="lastNameError"></span>
+                        </div>
+                    </div>
+                    <div class="wizard-card-footer">
+                        <a href="cart.html" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Back to Cart</a>
+                        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+                <div id="orderSidebar"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; 2024 FlipShop. All rights reserved.</p></div></div></footer>
+    <nav class="mobile-bottom-nav">
+        <a href="index.html" class="bottom-nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="products.html" class="bottom-nav-item"><i class="fas fa-th-large"></i><span>Products</span></a>
+        <a href="cart.html" class="bottom-nav-item"><i class="fas fa-shopping-cart"></i><span>Cart</span><span class="bottom-badge" id="bottomCartBadge">0</span></a>
+        <a href="tracking.html" class="bottom-nav-item"><i class="fas fa-truck"></i><span>Track</span></a>
+    </nav>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartBadge();
+            renderCheckoutSidebar('orderSidebar');
+            const data = getCheckoutData();
+            if (data.firstName) document.getElementById('firstName').value = data.firstName;
+            if (data.lastName) document.getElementById('lastName').value = data.lastName;
+
+            document.getElementById('nextBtn').addEventListener('click', function() {
+                const firstName = document.getElementById('firstName').value.trim();
+                const lastName = document.getElementById('lastName').value.trim();
+                let valid = true;
+                document.getElementById('firstNameError').textContent = '';
+                document.getElementById('lastNameError').textContent = '';
+                document.getElementById('firstName').classList.remove('input-error');
+                document.getElementById('lastName').classList.remove('input-error');
+
+                if (!firstName || firstName.length < 2) {
+                    document.getElementById('firstNameError').textContent = firstName ? 'At least 2 characters required' : 'First name is required';
+                    document.getElementById('firstName').classList.add('input-error');
+                    valid = false;
+                }
+                if (!lastName || lastName.length < 2) {
+                    document.getElementById('lastNameError').textContent = lastName ? 'At least 2 characters required' : 'Last name is required';
+                    document.getElementById('lastName').classList.add('input-error');
+                    valid = false;
+                }
+                if (valid) {
+                    saveCheckoutData({ firstName, lastName });
+                    window.location.href = 'checkout-step2.html';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail - FlipShop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-top">
+            <div class="container header-flex">
+                <a href="index.html" class="logo"><i class="fas fa-bolt"></i> Flip<span>Shop</span></a>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search for products, brands and more">
+                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                </div>
+                <nav class="header-nav">
+                    <a href="index.html" class="nav-link"><i class="fas fa-home"></i> <span>Home</span></a>
+                    <a href="products.html" class="nav-link"><i class="fas fa-th-large"></i> <span>Products</span></a>
+                    <a href="cart.html" class="nav-link cart-link"><i class="fas fa-shopping-cart"></i> <span>Cart</span><span class="cart-badge" id="cartBadge">0</span></a>
+                    <a href="tracking.html" class="nav-link"><i class="fas fa-truck"></i> <span>Track</span></a>
+                </nav>
+                <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+        <div class="mobile-nav" id="mobileNav">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="products.html"><i class="fas fa-th-large"></i> Products</a>
+            <a href="cart.html"><i class="fas fa-shopping-cart"></i> Cart</a>
+            <a href="tracking.html"><i class="fas fa-truck"></i> Track Order</a>
+        </div>
+    </header>
+
+    <div class="breadcrumb">
+        <div class="container">
+            <a href="index.html">Home</a> <i class="fas fa-chevron-right"></i>
+            <a href="products.html">Products</a> <i class="fas fa-chevron-right"></i>
+            <span id="breadcrumbProduct">Product</span>
+        </div>
+    </div>
+
+    <div class="product-detail-page">
+        <div class="container">
+            <div class="product-detail-grid" id="productDetail"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="sizeChartModal">
+        <div class="modal size-chart-modal">
+            <div class="modal-header-row">
+                <h2><i class="fas fa-ruler-combined"></i> Size Chart</h2>
+                <button class="modal-close" onclick="document.getElementById('sizeChartModal').classList.remove('show')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="size-chart-content" id="sizeChartContent"></div>
+            <div class="size-chart-tips" id="sizeChartTips"></div>
+        </div>
+    </div>
+
+    <section class="products-section">
+        <div class="container">
+            <h2 class="section-title">Similar Products</h2>
+            <div class="products-grid" id="similarProducts"></div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container"><div class="footer-bottom"><p>&copy; 2024 FlipShop. All rights reserved.</p></div></div>
+    </footer>
+
+    <nav class="mobile-bottom-nav">
+        <a href="index.html" class="bottom-nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="products.html" class="bottom-nav-item"><i class="fas fa-th-large"></i><span>Products</span></a>
+        <a href="cart.html" class="bottom-nav-item"><i class="fas fa-shopping-cart"></i><span>Cart</span><span class="bottom-badge" id="bottomCartBadge">0</span></a>
+        <a href="tracking.html" class="bottom-nav-item"><i class="fas fa-truck"></i><span>Track</span></a>
+    </nav>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+        let currentProduct = null;
+        let selectedSize = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = parseInt(urlParams.get('id'));
+            currentProduct = getProducts().find(p => p.id === productId);
+
+            if (!currentProduct) {
+                document.getElementById('productDetail').innerHTML = '<p class="error-msg">Product not found.</p>';
+                return;
+            }
+
+            document.title = currentProduct.name + ' - FlipShop';
+            document.getElementById('breadcrumbProduct').textContent = currentProduct.name;
+
+            renderProductDetail(currentProduct);
+
+            const similar = getProducts().filter(p => p.category === currentProduct.category && p.id !== currentProduct.id).slice(0, 4);
+            renderProductCards('similarProducts', similar);
+
+            updateCartBadge();
+        });
+
+        function renderProductDetail(product) {
+            const originalPrice = Math.round(product.price / (1 - product.discount/100));
+            const hasSizes = product.sizes && product.sizes.length > 0;
+
+            let sizeHTML = '';
+            if (hasSizes) {
+                const sizeTypeLabel = product.sizeType === 'shoe' ? 'Select Shoe Size' :
+                                     product.sizeType === 'waist' ? 'Select Waist Size' : 'Select Size';
+                const sizeIcon = product.sizeType === 'shoe' ? 'fa-shoe-prints' :
+                                 product.sizeType === 'waist' ? 'fa-ruler-horizontal' : 'fa-tshirt';
+
+                sizeHTML = `
+                    <div class="size-selector">
+                        <div class="size-selector-header">
+                            <h3><i class="fas ${sizeIcon}"></i> ${sizeTypeLabel}</h3>
+                            <button class="size-chart-btn" onclick="showSizeChart()">
+                                <i class="fas fa-ruler-combined"></i> Size Guide
+                            </button>
+                        </div>
+                        <div class="size-options" id="sizeOptions">
+                            ${product.sizes.map(size => `
+                                <button class="size-btn ${!size.inStock ? 'out-of-stock' : ''}"
+                                        data-size="${size.value}"
+                                        ${!size.inStock ? 'disabled' : ''}
+                                        onclick="selectSize(this, '${size.value}')">
+                                    ${size.label}
+                                    ${!size.inStock ? '<span class="oos-line"></span>' : ''}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <p class="size-error" id="sizeError" style="display:none;">
+                            <i class="fas fa-exclamation-triangle"></i> Please select a size
+                        </p>
+                        <p class="selected-size-info" id="selectedSizeInfo" style="display:none;">
+                            <i class="fas fa-check-circle"></i> Selected: <strong id="selectedSizeText"></strong>
+                        </p>
+                    </div>
+                `;
+            }
+
+            document.getElementById('productDetail').innerHTML = `
+                <div class="product-images">
+                    <div class="main-image">
+                        <img src="${product.image}" alt="${product.name}" id="mainImage">
+                        <span class="product-badge">${product.discount}% OFF</span>
+                        <button class="wishlist-btn" onclick="this.classList.toggle('active')">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="image-thumbnails">
+                        <img src="${product.image}" alt="${product.name}" class="thumb active" onclick="changeThumb(this)">
+                        <img src="https://via.placeholder.com/100x100/e8e8e8/888?text=View+2" alt="View 2" class="thumb" onclick="changeThumb(this)">
+                        <img src="https://via.placeholder.com/100x100/e8e8e8/888?text=View+3" alt="View 3" class="thumb" onclick="changeThumb(this)">
+                    </div>
+                    <div class="product-actions-mobile">
+                        <button class="btn btn-secondary btn-block" onclick="handleAddToCart()">
+                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                        </button>
+                        <button class="btn btn-primary btn-block" onclick="handleBuyNow()">
+                            <i class="fas fa-bolt"></i> Buy Now
+                        </button>
+                    </div>
+                </div>
+                <div class="product-info-detail">
+                    <span class="product-brand">${product.brand}</span>
+                    <h1 class="product-title">${product.name}</h1>
+                    <div class="product-rating-detail">
+                        <span class="rating-badge">${product.rating} <i class="fas fa-star"></i></span>
+                        <span class="rating-count">${product.reviews.toLocaleString()} Ratings</span>
+                    </div>
+                    <div class="product-price-detail">
+                        <span class="current-price">₹${product.price.toLocaleString('en-IN')}</span>
+                        <span class="original-price">₹${originalPrice.toLocaleString('en-IN')}</span>
+                        <span class="discount-badge">${product.discount}% off</span>
+                    </div>
+
+                    <div class="product-offers">
+                        <h3>Available Offers</h3>
+                        <ul>
+                            <li><i class="fas fa-tag"></i> Bank Offer: 5% Cashback on FlipShop Axis Bank Credit Card</li>
+                            <li><i class="fas fa-tag"></i> Bank Offer: 10% off up to ₹1,500 on HDFC Bank Credit Card EMI</li>
+                            <li><i class="fas fa-tag"></i> Special Price: Get extra 15% off</li>
+                        </ul>
+                    </div>
+
+                    ${sizeHTML}
+
+                    <div class="product-delivery">
+                        <h3><i class="fas fa-truck"></i> Delivery</h3>
+                        <div class="delivery-check">
+                            <input type="text" placeholder="Enter Pincode" maxlength="6" id="pincodeInput">
+                            <button class="btn btn-outline" onclick="checkDelivery()">Check</button>
+                        </div>
+                        <p class="delivery-info" id="deliveryInfo">Usually delivered in 3-5 business days</p>
+                    </div>
+
+                    <div class="product-highlights">
+                        <h3>Highlights</h3>
+                        <ul>
+                            <li>Premium quality product</li>
+                            <li>Brand: ${product.brand}</li>
+                            <li>Category: ${product.category}</li>
+                            ${hasSizes ? `<li>Available sizes: ${product.sizes.filter(s=>s.inStock).map(s=>s.label).join(', ')}</li>` : ''}
+                            <li>Free shipping on orders above ₹499</li>
+                            <li>Easy 30 day return policy</li>
+                        </ul>
+                    </div>
+
+                    <div class="product-description">
+                        <h3>Description</h3>
+                        <p>${product.description}</p>
+                    </div>
+
+                    <div class="product-services">
+                        <div class="service-item">
+                            <i class="fas fa-undo-alt"></i>
+                            <div><strong>30 Day Return</strong><span>Easy returns</span></div>
+                        </div>
+                        <div class="service-item">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <div><strong>COD Available</strong><span>Cash on delivery</span></div>
+                        </div>
+                        <div class="service-item">
+                            <i class="fas fa-shipping-fast"></i>
+                            <div><strong>Free Shipping</strong><span>Above ₹499</span></div>
+                        </div>
+                        <div class="service-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <div><strong>Warranty</strong><span>1 Year warranty</span></div>
+                        </div>
+                    </div>
+
+                    <div class="quantity-selector">
+                        <h3>Quantity</h3>
+                        <div class="qty-controls">
+                            <button onclick="changeQty(-1)">-</button>
+                            <input type="number" id="qtyInput" value="1" min="1" max="10">
+                            <button onclick="changeQty(1)">+</button>
+                        </div>
+                    </div>
+
+                    <div class="product-actions">
+                        <button class="btn btn-secondary btn-lg" onclick="handleAddToCart()">
+                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                        </button>
+                        <button class="btn btn-primary btn-lg" onclick="handleBuyNow()">
+                            <i class="fas fa-bolt"></i> Buy Now
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectSize(btn, sizeValue) {
+            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedSize = sizeValue;
+            document.getElementById('sizeError').style.display = 'none';
+            const info = document.getElementById('selectedSizeInfo');
+            info.style.display = 'block';
+            document.getElementById('selectedSizeText').textContent = btn.textContent.trim();
+        }
+
+        function handleAddToCart() {
+            const hasSizes = currentProduct.sizes && currentProduct.sizes.length > 0;
+            if (hasSizes && !selectedSize) {
+                const sizeError = document.getElementById('sizeError');
+                sizeError.style.display = 'block';
+                document.querySelector('.size-selector').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                document.getElementById('sizeOptions').classList.add('shake');
+                setTimeout(() => document.getElementById('sizeOptions').classList.remove('shake'), 600);
+                return;
+            }
+            const qty = parseInt(document.getElementById('qtyInput').value);
+            for (let i = 0; i < qty; i++) {
+                addToCart(currentProduct.id, selectedSize);
+            }
+            const sizeText = selectedSize ? ` (Size: ${selectedSize})` : '';
+            showToast(`${qty} item(s)${sizeText} added to cart!`);
+        }
+
+        function handleBuyNow() {
+            const hasSizes = currentProduct.sizes && currentProduct.sizes.length > 0;
+            if (hasSizes && !selectedSize) {
+                const sizeError = document.getElementById('sizeError');
+                sizeError.style.display = 'block';
+                document.querySelector('.size-selector').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                document.getElementById('sizeOptions').classList.add('shake');
+                setTimeout(() => document.getElementById('sizeOptions').classList.remove('shake'), 600);
+                return;
+            }
+            const qty = parseInt(document.getElementById('qtyInput').value);
+            for (let i = 0; i < qty; i++) {
+                addToCart(currentProduct.id, selectedSize);
+            }
+            window.location.href = 'checkout-step1.html';
+        }
+
+        function showSizeChart() {
+            if (!currentProduct || !currentProduct.sizeChart) return;
+            const chart = currentProduct.sizeChart;
+            let tableHTML = `
+                <table class="size-chart-table">
+                    <thead><tr>${chart.headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+                    <tbody>${chart.rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody>
+                </table>
+            `;
+
+            let tipsHTML = '';
+            if (currentProduct.sizeType === 'shoe') {
+                tipsHTML = `
+                    <h4><i class="fas fa-lightbulb"></i> How to Measure</h4>
+                    <div class="measure-tips">
+                        <div class="tip-item"><div class="tip-number">1</div><p>Place your foot on paper and trace around it</p></div>
+                        <div class="tip-item"><div class="tip-number">2</div><p>Measure the longest distance from heel to toe in cm</p></div>
+                        <div class="tip-item"><div class="tip-number">3</div><p>Use the measurement to find your size in the chart</p></div>
+                        <div class="tip-item"><div class="tip-number">4</div><p>If between sizes, choose the larger size</p></div>
+                    </div>
+                `;
+            } else if (currentProduct.sizeType === 'clothing') {
+                tipsHTML = `
+                    <h4><i class="fas fa-lightbulb"></i> How to Measure</h4>
+                    <div class="measure-tips">
+                        <div class="tip-item"><div class="tip-number">1</div><p><strong>Chest:</strong> Measure around the fullest part keeping tape level</p></div>
+                        <div class="tip-item"><div class="tip-number">2</div><p><strong>Length:</strong> Measure from shoulder down to desired length</p></div>
+                        <div class="tip-item"><div class="tip-number">3</div><p><strong>Shoulder:</strong> Measure from one shoulder seam to the other</p></div>
+                        <div class="tip-item"><div class="tip-number">4</div><p>For relaxed fit, consider going one size up</p></div>
+                    </div>
+                `;
+            } else if (currentProduct.sizeType === 'waist') {
+                tipsHTML = `
+                    <h4><i class="fas fa-lightbulb"></i> How to Measure</h4>
+                    <div class="measure-tips">
+                        <div class="tip-item"><div class="tip-number">1</div><p><strong>Waist:</strong> Measure around natural waistline comfortably</p></div>
+                        <div class="tip-item"><div class="tip-number">2</div><p><strong>Hip:</strong> Measure around widest part of hips</p></div>
+                        <div class="tip-item"><div class="tip-number">3</div><p><strong>Length:</strong> Measure from waistband to bottom along outside seam</p></div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('sizeChartContent').innerHTML = tableHTML;
+            document.getElementById('sizeChartTips').innerHTML = tipsHTML;
+            document.getElementById('sizeChartModal').classList.add('show');
+        }
+
+        function changeThumb(el) {
+            document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('mainImage').src = el.src;
+        }
+
+        function changeQty(delta) {
+            const input = document.getElementById('qtyInput');
+            let val = parseInt(input.value) + delta;
+            if (val < 1) val = 1;
+            if (val > 10) val = 10;
+            input.value = val;
+        }
+
+        function checkDelivery() {
+            const pincode = document.getElementById('pincodeInput').value;
+            const info = document.getElementById('deliveryInfo');
+            if (pincode.length === 6) {
+                info.innerHTML = '<i class="fas fa-check-circle" style="color:green"></i> Delivery available! Expected by ' +
+                    new Date(Date.now() + 5 * 86400000).toLocaleDateString('en-IN', {weekday:'long', month:'short', day:'numeric'});
+            } else {
+                info.innerHTML = '<i class="fas fa-exclamation-circle" style="color:red"></i> Please enter a valid 6-digit pincode';
+            }
+        }
+    </script>
+</body>
+</html>
